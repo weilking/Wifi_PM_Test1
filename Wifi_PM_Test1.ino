@@ -1,4 +1,7 @@
 
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
 #define Device_yeelink          2321
 #define Sensor_PM1_yeelink       3213
 #define Sensor_PM25_yeelink       3248 
@@ -28,6 +31,8 @@ float sum2=0.0;
 
 int temp = 0;
 
+LiquidCrystal_I2C lcd(0x20,16,2);  // set the LCD address to 0x20 for a 16 chars and 2 line display
+
 void setup() {
   Serial.begin(57600);
   while (!Serial) {
@@ -37,6 +42,10 @@ void setup() {
   pinMode(7,INPUT);
   starttime = millis();
   
+  //Initialize LCD
+  lcd.init();
+  lcd.setCursor(0,1);
+  lcd.print("PM1.0:    , POOR");
 }
 
 void loop() {
@@ -58,7 +67,7 @@ void loop() {
     lowpulseoccupancy = 0;
     lowpulseoccupancy2 = 0;
     wifi_update_yeelink(average_con,Device_yeelink,Sensor_PM1_yeelink,API_Key_yeelink);
-
+    LCD_Print(average_con);
     starttime = millis();
     while((millis()-starttime) < 6000)
     {
@@ -144,3 +153,39 @@ int getLength(float num)
   return i;
 }
 
+void LCD_Print(float PM)
+{
+  lcd.setCursor(6,1);
+  if(PM<1000)
+   {
+     lcd.print(" ");
+   }
+  lcd.print((int)PM);
+  
+  lcd.setCursor(11,1);
+  if(PM>0 && PM<75)
+  {
+    lcd.print("VGood");
+    lcd.noBacklight();
+  }
+  else if(PM<150)
+  {
+    lcd.print(" Good");
+    lcd.noBacklight();
+  }
+  else if(PM<300)
+  {
+    lcd.print("   OK");
+    lcd.noBacklight();
+  }
+  else if(PM<1050)
+  {
+    lcd.print(" Poor");
+    lcd.backlight();
+  }
+  else
+  {
+    lcd.print("VPoor");
+    lcd.backlight();
+  }
+}
