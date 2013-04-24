@@ -181,7 +181,7 @@ void LCD_Print(float PM)
   else if(PM<1050)
   {
     lcd.print(" Poor");
-    lcd.backlight();
+    lcd.noBacklight();
   }
   else
   {
