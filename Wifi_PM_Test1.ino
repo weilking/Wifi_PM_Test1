@@ -18,6 +18,7 @@ float ratio = 0;
 float concentration = 0;
 float ratio2 = 0;
 float concentration2 = 0;
+int flag1 = 0;
 
 float average_con = 0.0;
 float average_con2 = 0.0;
@@ -159,7 +160,16 @@ void LCD_Print(float PM)
   if(PM<1000)
    {
      lcd.print(" ");
+     if(PM<100)
+     {
+       lcd.print(" ");
+       if(PM<10)
+       {
+         lcd.print(" ");
+       }
+     }
    }
+   
   lcd.print((int)PM);
   
   lcd.setCursor(11,1);
